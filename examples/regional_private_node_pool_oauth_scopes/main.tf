@@ -15,7 +15,9 @@
  */
 
 module "gke" {
-  source                            = "../../modules/private-cluster"
+  source  = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
+  version = "~> 35.0"
+
   project_id                        = var.project_id
   name                              = "random-test-cluster"
   region                            = "us-west1"
@@ -32,6 +34,7 @@ module "gke" {
   service_account                   = "create"
   remove_default_node_pool          = true
   disable_legacy_metadata_endpoints = true
+  deletion_protection               = false
 
   master_authorized_networks = [
     {

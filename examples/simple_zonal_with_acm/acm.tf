@@ -15,7 +15,9 @@
  */
 
 module "acm" {
-  source       = "../../modules/acm"
+  source  = "terraform-google-modules/kubernetes-engine/google//modules/acm"
+  version = "~> 35.0"
+
   project_id   = var.project_id
   location     = module.gke.location
   cluster_name = module.gke.name
@@ -24,11 +26,11 @@ module "acm" {
   sync_branch = "1.0.0"
   policy_dir  = "foo-corp"
 
+  enable_policy_controller = false
+
   enable_fleet_feature = var.enable_fleet_feature
 
   secret_type = "ssh"
-
-  policy_bundles = ["https://github.com/GoogleCloudPlatform/acm-policy-controller-library/bundles/policy-essentials-v2022?ref=dd3f932eefa4c4c44c548144be1c2331d8594689"]
 
   create_metrics_gcp_sa = true
 }

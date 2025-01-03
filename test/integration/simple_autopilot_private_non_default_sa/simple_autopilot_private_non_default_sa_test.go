@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC
+// Copyright 2022-2024 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,20 +16,23 @@ package simple_autopilot_private_non_default_sa
 
 import (
 	"testing"
+	"time"
 
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/gcloud"
 	"github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test/pkg/tft"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-google-modules/terraform-google-kubernetes-engine/test/integration/utils"
+	"github.com/terraform-google-modules/terraform-google-kubernetes-engine/test/integration/testutils"
 )
 
 func TestSimpleAutopilotPrivateNonDefaultSA(t *testing.T) {
-	projectID := utils.GetTestProjectFromSetup(t, 1)
-	bpt := tft.NewTFBlueprintTest(t, tft.WithVars(map[string]interface{}{"project_id": projectID}))
+	projectID := testutils.GetTestProjectFromSetup(t, 1)
+	bpt := tft.NewTFBlueprintTest(t,
+		tft.WithVars(map[string]interface{}{"project_id": projectID}),
+		tft.WithRetryableTerraformErrors(testutils.RetryableTransientErrors, 3, 2*time.Minute),
+	)
 
 	bpt.DefineVerify(func(assert *assert.Assertions) {
-		//Skipping Default Verify as the Verify Stage fails due to change in Client Cert Token
-		// bpt.DefaultVerify(assert)
+		bpt.DefaultVerify(assert)
 
 		location := bpt.GetStringOutput("location")
 		clusterName := bpt.GetStringOutput("cluster_name")

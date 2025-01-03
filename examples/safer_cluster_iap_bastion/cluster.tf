@@ -15,7 +15,8 @@
  */
 
 module "gke" {
-  source = "../../modules/safer-cluster"
+  source  = "terraform-google-modules/kubernetes-engine/google//modules/safer-cluster"
+  version = "~> 35.0"
 
   project_id              = module.enabled_google_apis.project_id
   name                    = var.cluster_name
@@ -25,6 +26,7 @@ module "gke" {
   ip_range_pods           = module.vpc.subnets_secondary_ranges[0][0].range_name
   ip_range_services       = module.vpc.subnets_secondary_ranges[0][1].range_name
   enable_private_endpoint = false
+  deletion_protection     = false
   master_authorized_networks = [{
     cidr_block   = "${module.bastion.ip_address}/32"
     display_name = "Bastion Host"
